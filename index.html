@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vlamiscend — Instant Memories. Solid Metal.</title>
+  
+  <style>
+    :root{ --bg:#0a0a0a; --fg:#ececec; --muted:#a3a3a3; --gold:#c9a34a; --radius:20px; --shadow:0 20px 40px rgba(0,0,0,.6); }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family: Inter, ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); color:var(--fg); overflow-x:hidden}
+    a{color:inherit; text-decoration:none}
+
+    /* Headings */
+    h1,h2,h3{margin:0}
+    .gold{background: linear-gradient(120deg,#5a4b1d,#e9d598 25%,#8a6b1a 45%,#f6e6ab 55%,#6d541b 75%,#e9d598); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+    /* Layout */
+    header{position:sticky; top:0; z-index:20; backdrop-filter: blur(8px); background: linear-gradient(to bottom, rgba(10,10,10,.85), rgba(10,10,10,.35)); border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav{max-width:1200px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; gap:16px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.12em}
+    .brand-mark{width:26px;height:26px;border-radius:50%; background: radial-gradient(circle at 30% 30%, #fff, #ddd 10%, #b99638 30%, #6c5320 55%, #1d1606 70%); box-shadow: inset 0 0 10px rgba(255,255,255,.25), 0 0 24px rgba(201,163,74,.35)}
+    .nav a.cta{margin-left:auto; padding:10px 16px; border-radius:999px; border:1px solid rgba(255,255,255,.1); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); font-weight:600}
+
+    section{max-width:1200px; margin:0 auto; padding:72px 20px}
+    .section-title{font-size:clamp(28px,4vw,48px); text-align:center; margin-bottom:8px}
+    .section-sub{color:var(--muted); text-align:center; margin-bottom:28px}
+
+    /* HERO */
+    .hero{display:grid; grid-template-columns:1.15fr .85fr; gap:40px; align-items:center}
+    @media (max-width: 980px){ .hero{grid-template-columns:1fr} }
+    .badge{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.08); font-size:12px; opacity:.85}
+    .slogan{font-size: clamp(36px, 6vw, 72px); line-height:1.05; letter-spacing:.02em; margin:10px 0 14px}
+    .lede{color:var(--muted); font-size:18px; max-width:56ch}
+    .actions{display:flex; gap:14px; margin-top:22px; flex-wrap:wrap}
+    .btn{padding:14px 18px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); font-weight:700; letter-spacing:.03em; cursor:pointer}
+    .btn.gold{ background: linear-gradient(180deg, #e7c768, #9c7a2a); border-color:#c9a34a; color:#111; text-shadow:0 1px 0 rgba(255,255,255,.35)}
+
+    .hero-visual{position:relative; aspect-ratio: 4/3; border-radius: var(--radius); background:#0c0c0c; border:1px solid rgba(255,255,255,.06); box-shadow: var(--shadow); overflow:hidden}
+    #heroGl{width:100%; height:100%; display:block}
+
+    /* ABOUT */
+    .about{display:grid; grid-template-columns:1fr 1fr; gap:24px}
+    @media (max-width: 900px){ .about{grid-template-columns:1fr} }
+    .about .card{background:#0f0f0f; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:20px}
+
+    /* GALLERY */
+    .gallery{display:grid; grid-template-columns: repeat(6, 1fr); gap:12px}
+    @media (max-width: 1100px){ .gallery{grid-template-columns: repeat(4, 1fr)} }
+    @media (max-width: 700px){ .gallery{grid-template-columns: repeat(2, 1fr)} }
+    .tile{position:relative; aspect-ratio:1/1; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08); background:#0f0f0f; transform-style:preserve-3d; transition: transform .25s ease, box-shadow .25s ease}
+    .tile:hover{ transform: translateY(-6px) rotateX(6deg) rotateY(-4deg); box-shadow: 0 30px 60px rgba(0,0,0,.45)}
+    .tile img{width:100%; height:100%; object-fit:cover; filter: contrast(1.05) saturate(1.05)}
+    .tile::after{content:""; position:absolute; inset:0; background: linear-gradient(180deg, transparent, rgba(0,0,0,.35))}
+    .tile .label{position:absolute; left:10px; bottom:10px; padding:6px 10px; border-radius:999px; font-size:12px; background: rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.1)}
+
+    /* SIMULATOR (preview) */
+    /* ANCHOR:SIMULATOR_START */
+    .sim-wrap{display:grid; grid-template-columns:1fr; gap:16px}
+    .canvas3d-wrap{position:relative; width:100%; aspect-ratio:16/10; border-radius:20px; overflow:hidden; background:#111; border:1px solid rgba(255,255,255,.1); box-shadow:var(--shadow)}
+    #canvas3d{width:100%; height:100%; display:block; opacity:0; transition:opacity .3s ease}
+    #fxLayer{position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;}
+    .canvas3d-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none}
+    .canvas3d-overlay h3{font-size:clamp(18px,3.5vw,36px); background:linear-gradient(120deg,#e7c768,#9c7a2a); -webkit-background-clip:text; color:transparent; text-shadow:0 0 14px rgba(201,163,74,.45)}
+    .controls{display:flex; gap:10px; flex-wrap:wrap}
+    .control{flex:1; min-width:180px; padding:10px 12px; border-radius:12px; background:#0f0f0f; border:1px solid rgba(255,255,255,.08)}
+    .control label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    .range{width:100%}
+    /* Lite режим (2D-имитация металла без WebGL) */
+    .canvas3d-wrap.lite #canvas3d,
+    .canvas3d-wrap.lite #fxLayer{ display:none; }
+    .canvas3d-wrap.lite #simFallback{ display:block !important; filter:contrast(1.08) saturate(1.05); }
+    .canvas3d-wrap.lite::after{ content:""; position:absolute; inset:-20%; pointer-events:none; background: conic-gradient(from 0deg, rgba(233,213,152,0), rgba(233,213,152,0.18), rgba(233,213,152,0) 25%); mix-blend-mode:screen; animation: sheen 3.6s linear infinite; opacity:.6 }
+    @keyframes sheen{ to{ transform: rotate(1turn) } }
+    /* ANCHOR:SIMULATOR_END */
+
+    /* 3D METAL WEAVE */
+    /* ANCHOR:WEAVE_START */
+    .weave{display:grid; grid-template-columns:1.1fr .9fr; gap:24px}
+    @media (max-width: 1000px){ .weave{grid-template-columns:1fr} }
+    .weave-canvas{position:relative; border-radius: var(--radius); border:1px solid rgba(255,255,255,.08); overflow:hidden; background:#0b0b0b; box-shadow: var(--shadow)}
+    #weave3d{width:100%; height:100%; display:block; aspect-ratio: 16/9}
+    .weave-side .desc{color:var(--muted)}
+    /* ANCHOR:WEAVE_END */
+
+    /* WHY METAL */
+    .why{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+    @media (max-width: 900px){ .why{grid-template-columns:1fr} }
+    .why .card{background:#0f0f0f; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px}
+    .why .ico{width:28px; height:28px; border-radius:50%; background: radial-gradient(circle at 30% 30%, #f6e6ab, #9c7a2a 70%); box-shadow:0 0 16px rgba(201,163,74,.35); margin-bottom:8px}
+
+    /* STORIES */
+    .stories{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+    @media (max-width: 1100px){ .stories{grid-template-columns:1fr 1fr} }
+    @media (max-width: 700px){ .stories{grid-template-columns:1fr} }
+    .story{background:#0f0f0f; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px}
+
+    /* ORDER + SURPRISE DROP */
+    .card{background:#0f0f0f; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px}
+    .order-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    @media (max-width:900px){ .order-grid{grid-template-columns:1fr} }
+    .inp{width:100%; padding:12px 14px; border-radius:12px; background:#0b0b0b; border:1px solid rgba(255,255,255,.08); color:#eaeaea}
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+
+    /* CONTACT */
+    .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    @media (max-width:900px){ .contact-grid{grid-template-columns:1fr} }
+
+    /* Footer */
+    footer{padding:40px 20px; border-top:1px solid rgba(255,255,255,.06); color:var(--muted)}
+    #diag{display:none; max-width:1200px; margin:0 auto; padding:24px 20px; color:#bbb; font-size:14px}
+    body.debug #diag{display:block}
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand"><div class="brand-mark"></div><span class="gold">VLAMISCEND</span></div>
+      <a class="cta" href="#simulator">К симулятору</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section>
+      <div class="hero">
+        <div>
+          <div class="badge">Premiere Metal Prints • Miami</div>
+          <h1 class="slogan"><span class="gold">Instant Memories. Solid Metal.</span></h1>
+          <p class="lede">Премиальная фотопечать на алюминиевом холсте. Прямо на странице — живое 3D‑превью, галерея, истории и Surprise Drop.</p>
+          <div class="actions">
+            <a href="#simulator" class="btn gold">Попробовать превью</a>
+            <a href="#gallery" class="btn">Смотреть работы</a>
+          </div>
+        </div>
+        <div class="hero-visual"><canvas id="heroGl"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <h2 class="section-title">О нас</h2>
+      <p class="section-sub">История и философия Vlamiscend</p>
+      <div class="about">
+        <div class="card"><h3 class="gold">Рождены из света</h3><p>Мы превращаем мгновения в долговечные артефакты: печать на анодированном алюминии с глубоким металлическим блеском и музейной стойкостью.</p></div>
+        <div class="card"><h3 class="gold">Честная роскошь</h3><p>Минимализм, внимание к деталям и невидимая инженерия. Никакой мишуры — только качество, которое ощущается глазами и руками.</p></div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery">
+      <h2 class="section-title">Галерея работ</h2>
+      <p class="section-sub">Реальные сюжеты, стилизованные под металл</p>
+      <div class="gallery">
+        <div class="tile"><img alt="Bride & Groom" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80"><div class="label">Bride & Groom</div></div>
+        <div class="tile"><img alt="Rings" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80"><div class="label">Rings</div></div>
+        <div class="tile"><img alt="Bouquet" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80"><div class="label">Bouquet</div></div>
+        <div class="tile"><img alt="First Dance" src="https://images.unsplash.com/photo-1519744346363-63a761017255?auto=format&fit=crop&w=900&q=80"><div class="label">First Dance</div></div>
+        <div class="tile"><img alt="Cake" src="https://images.unsplash.com/photo-1519167758481-83f550bb49a0?auto=format&fit=crop&w=900&q=80"><div class="label">Cake</div></div>
+        <div class="tile"><img alt="Venue" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"><div class="label">Venue</div></div>
+      </div>
+    </section>
+
+    <!-- SIMULATOR -->
+    <section id="simulator">
+      <h2 class="section-title">3D‑холст превью</h2>
+      <p class="section-sub">Ваше фото оживает на переливающемся металлическом холсте. Нажмите на холст или перетащите изображение.</p>
+      <div class="sim-wrap">
+        <div class="canvas3d-wrap">
+          <img id="simFallback" alt="Vlamiscend preview" loading="eager" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(1.05);" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1400&q=80"/>
+          <canvas id="canvas3d"></canvas>
+          <canvas id="fxLayer"></canvas>
+          <div class="canvas3d-overlay"><h3>Загрузка...</h3></div>
+        </div>
+        <div class="controls">
+          <div class="control"><label>Блеск</label><input id="uiSpec" class="range" type="range" min="0" max="2" step="0.01" value="1.1"></div>
+          <div class="control"><label>Глубина</label><input id="uiDepth" class="range" type="range" min="0" max="1" step="0.01" value="0.35"></div>
+          <div class="control"><label>Шероховатость</label><input id="uiRough" class="range" type="range" min="0.02" max="1" step="0.01" value="0.25"></div>
+          <div class="control"><label>Анизотропия</label><input id="uiAniso" class="range" type="range" min="0" max="1" step="0.01" value="0.7"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3D METAL WEAVE (после превью) -->
+    <section id="weave">
+      <h2 class="section-title">Когда изображение оживает</h2>
+      <p class="section-sub">Сотни частиц «наносят» картинку на переливающийся металлический холст. Затем полотно оживает иридесцентным блеском.</p>
+      <div class="weave">
+        <div class="weave-canvas"><canvas id="weave3d"></canvas></div>
+        <div class="weave-side">
+          <div class="card">
+            <h3 class="gold" style="margin-top:0">Metal Weave</h3>
+            <p class="desc">Нажмите «Повторить», чтобы перезапустить анимацию. «Использовать фото из превью» подхватит текущий кадр 3D‑холста.</p>
+            <div class="actions" style="margin-top:12px; display:flex; gap:12px; flex-wrap:wrap">
+              <button class="btn gold" id="weaveReplay">Повторить</button>
+              <button class="btn" id="weaveUseCurrent">Использовать фото из превью</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY METAL -->
+    <section id="why">
+      <h2 class="section-title">Почему металл</h2>
+      <p class="section-sub">Технология печати, достойная музея</p>
+      <div class="why">
+        <div class="card"><div class="ico"></div><h3>Долговечность</h3><p>Алюминий не выцветает десятилетиями — влагостойкий и устойчивый к царапинам.</p></div>
+        <div class="card"><div class="ico"></div><h3>Глубокий блеск</h3><p>Иридесцентные блики подчеркивают объём и создают эффект «живой» поверхности.</p></div>
+        <div class="card"><div class="ico"></div><h3>Минимализм</h3><p>Тонкий профиль и скрытое крепление — идеально для современных интерьеров.</p></div>
+      </div>
+    </section>
+
+    <!-- STORIES -->
+    <section id="stories">
+      <h2 class="section-title">Vlamiscend Stories</h2>
+      <p class="section-sub">Мини‑кейсы с трогательными историями клиентов</p>
+      <div class="stories">
+        <div class="story"><h3 class="gold">Свадебный рассвет</h3><p>Мы перенесли кадр с пляжа Майами на металл 60×90. Невеста сказала: «Каждый раз вижу, как солнце встаёт заново».</p></div>
+        <div class="story"><h3 class="gold">Портрет мамы</h3><p>Заказали «Surprise Drop» к юбилею. Курьер доставил без указания отправителя — слёзы радости и объятия в FaceTime.</p></div>
+        <div class="story"><h3 class="gold">Уличная классика</h3><p>Ч/б кадр на матовом алюминии 40×60: зерно плёнки и свет фонаря получили новый объём.</p></div>
+      </div>
+    </section>
+
+    <!-- ORDER + SURPRISE DROP -->
+    <section id="order">
+      <h2 class="section-title">Оформить заказ</h2>
+      <p class="section-sub">Выберите размер, загрузите фото и при желании активируйте Surprise Drop</p>
+      <form id="orderForm" class="card" onsubmit="return false;">
+        <div class="order-grid">
+          <div>
+            <label>Размер холста</label>
+            <select class="inp" id="size">
+              <option>30×45 см</option>
+              <option>40×60 см</option>
+              <option>60×90 см</option>
+              <option>80×120 см</option>
+            </select>
+          </div>
+          <div>
+            <label>Загрузить фото</label>
+            <input class="inp" id="upl" type="file" accept="image/*" />
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="row" style="align-items:center">
+            <label style="display:flex; align-items:center; gap:8px"><input id="surprise" type="checkbox"/> Surprise Drop — скрыть отправителя</label>
+          </div>
+          <div id="sDrop" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px">
+            <input class="inp" placeholder="Получатель (ФИО)" id="recName"/>
+            <input class="inp" placeholder="Email или телефон получателя" id="recContact"/>
+            <input class="inp" placeholder="Город, адрес доставки" id="recAddr" style="grid-column:1/3"/>
+            <textarea class="inp" placeholder="Сообщение для получателя (необязательно)" id="recMsg" rows="3" style="grid-column:1/3"></textarea>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn gold" id="payBtn">Быстрая оплата</button>
+          <button class="btn" id="previewBtn">Предпросмотр на холсте</button>
+        </div>
+        <p id="orderNote" style="color:#a3a3a3; margin-top:10px"></p>
+      </form>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <h2 class="section-title">Связь и соцсети</h2>
+      <p class="section-sub">Мы на связи 7 дней в неделю</p>
+      <div class="contact-grid">
+        <div class="card">
+          <h3 class="gold">Контакты</h3>
+          <p>Email: hello@vlamiscend.com<br>Instagram: @vlamiscend<br>TikTok: @vlamiscend</p>
+          <p>Майами, FL</p>
+        </div>
+        <div class="card">
+          <h3 class="gold">Написать нам</h3>
+          <div class="row"><input class="inp" placeholder="Ваше имя"/><input class="inp" placeholder="Email"/></div>
+          <textarea class="inp" placeholder="Сообщение" rows="4" style="margin-top:12px"></textarea>
+          <div class="row" style="margin-top:12px"><button class="btn gold">Отправить</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <section style="max-width:1200px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px"><div class="brand-mark"></div><span class="gold" style="font-weight:800">VLAMISCEND</span><div style="margin-left:auto; color:var(--muted)">© <span id="year"></span></div></div>
+    </section>
+  </footer>
+
+  <div id="diag"></div>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- ResizeObserver helper: coalesce with rAF to avoid loop errors
+    function rafResize(el, cb){
+      let pending=false; const ro=new ResizeObserver(()=>{ if(pending) return; pending=true; requestAnimationFrame(()=>{ pending=false; cb(); }); });
+      ro.observe(el); return ro;
+    }
+
+    // --- HERO minimal GL background (safe fallback if WebGL off)
+    (function(){ const c=document.getElementById('heroGl'); if(!c) return; const gl=c.getContext('webgl'); function resize(){ c.width=c.clientWidth*devicePixelRatio; c.height=c.clientHeight*devicePixelRatio; if(gl) gl.viewport(0,0,c.width,c.height); } rafResize(c, resize); if(!gl){ c.style.background='linear-gradient(135deg,#121212,#1a1a1a)'; return; }
+      const vs=`attribute vec2 p; void main(){ gl_Position=vec4(p,0.,1.); }`;
+      const fs=`precision mediump float; uniform vec2 r; uniform float t; float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);} float n(vec2 p){vec2 i=floor(p), f=fract(p); float a=h(i), b=h(i+vec2(1,0)), c=h(i+vec2(0,1)), d=h(i+vec2(1,1)); vec2 u=f*f*(3.-2.*f); return mix(a,b,u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y;} void main(){ vec2 uv=(gl_FragCoord.xy/r)*2.-1.; float v=.35+.3*n(uv*4.+t*.1)+.2*n(uv*12.-t*.2); vec3 col=mix(vec3(.08,.07,.06), vec3(.7,.6,.35), v); gl_FragColor=vec4(col,1.);} `;
+      function comp(t,s){const sh=gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh); return sh;} const pr=gl.createProgram(); gl.attachShader(pr,comp(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,comp(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr); gl.useProgram(pr); const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW); const loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0); const ur=gl.getUniformLocation(pr,'r'); const ut=gl.getUniformLocation(pr,'t'); function draw(t){ gl.uniform2f(ur,c.width,c.height); gl.uniform1f(ut,t*0.001); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); requestAnimationFrame(draw);} resize(); requestAnimationFrame(draw); })();
+
+    // --- Helpers
+    function checkWebGL(){ try{ const test=document.createElement('canvas'); const g=test.getContext('webgl')||test.getContext('experimental-webgl'); return !!(g && window.WebGLRenderingContext && g instanceof WebGLRenderingContext);}catch(e){ return false; } }
+    function toDataImageFromCanvas(cvs){ try{ return cvs.toDataURL('image/png'); }catch(e){ return null; } }
+
+    // --- SIMULATOR (anisotropic metal) with default couple image + DnD + rAF-resize
+    (function(){
+      const canvas=document.getElementById('canvas3d');
+      const overlay=document.querySelector('.canvas3d-overlay h3');
+      if(!canvas) return;
+
+      const hasGL=checkWebGL();
+      const fallbackImg=document.getElementById('simFallback');
+      const DEFAULT_IMG_URL = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1400&q=80';
+      const wrap=canvas.parentElement;
+      const controls=document.querySelector('#simulator .controls');
+      let liteMode=false;
+
+      const DEFAULT_DATAURL=((()=>{ const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1400' height='900' viewBox='0 0 1400 900'>
+  <defs>
+    <linearGradient id='bg' x1='0' x2='1' y1='0' y2='1'>
+      <stop offset='0%' stop-color='#0d0d0f'/>
+      <stop offset='100%' stop-color='#1a1814'/>
+    </linearGradient>
+    <radialGradient id='gold' cx='50%' cy='40%' r='60%'>
+      <stop offset='0%' stop-color='#f6e6ab'/>
+      <stop offset='45%' stop-color='#c9a34a'/>
+      <stop offset='100%' stop-color='#6d541b'/>
+    </radialGradient>
+    <linearGradient id='veil' x1='0' x2='1'>
+      <stop offset='0%' stop-color='rgba(255,255,255,0.9)'/>
+      <stop offset='100%' stop-color='rgba(255,255,255,0.1)'/>
+    </linearGradient>
+  </defs>
+  <rect width='100%' height='100%' fill='url(#bg)'/>
+  <g opacity='0.22'>
+    <circle cx='220' cy='180' r='120' fill='url(#gold)'/>
+    <circle cx='1240' cy='720' r='160' fill='url(#gold)'/>
+    <circle cx='1020' cy='160' r='80' fill='url(#gold)'/>
+    <circle cx='200' cy='720' r='100' fill='url(#gold)'/>
+  </g>
+  <!-- groom -->
+  <g fill='#111' stroke='#222' stroke-width='3' transform='translate(520,240)'>
+    <rect x='70' y='240' width='110' height='260' rx='10'/>
+    <path d='M125 190 c-34 0 -60 -26 -60 -60 s26 -62 60 -62 s60 28 60 62 s-26 60 -60 60z'/>
+    <path d='M60 270 h130 l40 60 l-40 28 h-130 l-40 -28z' fill='#0f0f10'/>
+    <path d='M115 360 l20 30 l20 -30 z' fill='url(#gold)'/>
+  </g>
+  <!-- bride -->
+  <g transform='translate(720,220)'>
+    <path d='M100 170 c-28 0 -52 -24 -52 -54 s24 -58 52 -58 s52 26 52 58 s-24 54 -52 54z' fill='#111' stroke='#222' stroke-width='3'/>
+    <path d='M50 230 q50 -20 100 0 q80 28 130 160 l-56 0 q-42 -96 -78 -112 q-18 72 -36 176 l-76 0 q-10 -140 16 -224z' fill='#121213' stroke='#222' stroke-width='3'/>
+    <path d='M28 220 q54 -34 144 0 q-72 10 -144 0z' fill='url(#veil)' opacity='0.6'/>
+    <circle cx='214' cy='390' r='22' fill='url(#gold)'/>
+    <circle cx='236' cy='404' r='12' fill='url(#gold)'/>
+  </g>
+</svg>`; return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg); })());
+
+      function showFallback(src){ if(!fallbackImg) return; if(src) fallbackImg.src=src; fallbackImg.style.display='block'; if(overlay) overlay.textContent=''; }
+      function hideFallback(){ if(!fallbackImg) return; if(liteMode) return; fallbackImg.style.display='none'; }
+      function setLite(on){
+        liteMode = !!on;
+        wrap.classList.toggle('lite', liteMode);
+        if (liteMode) {
+          showFallback(fallbackImg && fallbackImg.src ? fallbackImg.src : DEFAULT_IMG_URL);
+          if (overlay) overlay.textContent = 'Lite режим: статичное превью';
+        } else {
+          if (overlay) overlay.textContent = 'Нажмите или перетащите файл';
+          hideFallback();
+        }
+      }
+
+      // Кнопка Lite — добавляем динамически
+      if(controls){ const liteBtn=document.createElement('button'); liteBtn.className='btn'; liteBtn.type='button'; liteBtn.id='liteBtn'; liteBtn.textContent='Lite 2D'; controls.appendChild(liteBtn); liteBtn.addEventListener('click',()=> setLite(!liteMode)); if(location.hash.includes('lite')) setLite(true); }
+
+      if(!hasGL){ showFallback(DEFAULT_IMG_URL); if(overlay){ overlay.textContent='Статичное превью • включите WebGL для анимации'; } setLite(true); return; }
+
+      // --- WebGL init
+      const gl=canvas.getContext('webgl', {antialias:true, preserveDrawingBuffer:true});
+      function resize(){ canvas.width=canvas.clientWidth*devicePixelRatio; canvas.height=canvas.clientHeight*devicePixelRatio; if(gl) gl.viewport(0,0,canvas.width,canvas.height);} rafResize(canvas, resize);
+      let prog, u={}, a={}, tex=null, start=performance.now(), mouse=[0.5,0.5], firstFrame=true;
+      const VS=`attribute vec2 pos; varying vec2 vUv; void main(){ vUv=(pos+1.0)*0.5; gl_Position=vec4(pos,0.,1.); }`;
+      const FS=`precision mediump float; varying vec2 vUv; uniform sampler2D img; uniform vec2 res; uniform vec2 mouse; uniform float time; uniform float specular; uniform float depth; uniform float rough; uniform float aniso; float h(vec2 p){return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453);} float n(vec2 p){vec2 i=floor(p), f=fract(p); float a=h(i), b=h(i+vec2(1,0)), c=h(i+vec2(0,1)), d=h(i+vec2(1,1)); vec2 u=f*f*(3.-2.*f); return mix(a,b,u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y;} vec3 metalNormal(vec2 uv){ float stripe=(n(vec2(uv.y*120.0,0.0)+time*0.02)*2.0-1.0)*0.25; float nx=(n(uv*40.0+time*0.03)-0.5)*depth*0.7 + stripe*aniso; float ny=(n(uv*60.0-time*0.02)-0.5)*depth*0.7; return normalize(vec3(nx,ny,1.0)); } float gauss(float x,float s){ return exp(-x*x/(2.0*s*s)); } void main(){ vec2 uv=vUv; vec2 ratio=vec2(res.x/res.y,1.0); vec2 iuv=(uv-0.5)*ratio+0.5; iuv=clamp(iuv,0.0,1.0); vec3 base=texture2D(img,iuv).rgb; vec3 nrm=metalNormal(uv); vec3 l=normalize(vec3(mouse*2.0-1.0,0.7)); vec3 v=normalize(vec3(0.0,0.0,1.0)); float ndl=max(dot(nrm,l),0.0); vec3 hlf=normalize(l+v); float roughness=max(rough,0.02); float spec=pow(max(dot(nrm,hlf),0.0), mix(20.0,220.0,(1.0-roughness)) ) * (0.5+aniso*0.85+0.05); float ir = 0.04*sin(uv.x*800.0 + time*10.0) + 0.02*sin(uv.y*600.0 - time*7.0); vec2 dir = normalize(vec2(0.86,0.5)); float phase = sin(time*0.6)*0.4; float d = dot(uv-0.5, dir) - phase; float sweep = gauss(d, 0.08); vec3 sweepCol = vec3(0.98,0.92,0.72) * sweep * 0.35; float glint=smoothstep(0.96,1.0,ndl) * (0.12 + 0.12*sin(uv.y*220.0 + time*5.0)); vec3 col=base*(0.75 + 0.35*ndl + ir) + vec3(specular)*spec + glint + sweepCol; float vig=1.0 - smoothstep(0.7,1.05,distance(uv, vec2(0.5))); col*=mix(vec3(1.0), vec3(1.0,0.96,0.85), 0.08); col*=vig; gl_FragColor=vec4(col,1.0);} `;
+      function comp(t,s){const sh=gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh); if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(sh)); return sh; }
+      function link(vs,fs){const p=gl.createProgram(); gl.attachShader(p,comp(gl.VERTEX_SHADER,vs)); gl.attachShader(p,comp(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(p); if(!gl.getProgramParameter(p,gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p)); return p; }
+      function setup(){ prog=link(VS,FS); gl.useProgram(prog); const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW); a.pos=gl.getAttribLocation(prog,'pos'); gl.enableVertexAttribArray(a.pos); gl.vertexAttribPointer(a.pos,2,gl.FLOAT,false,0,0); ['img','res','mouse','time','specular','depth','rough','aniso'].forEach(n=>u[n]=gl.getUniformLocation(prog,n)); tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); const px=new Uint8Array([220,220,220,255]); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,px); loadDefaultCouple(); resize(); draw(); }
+      function draw(){ const t=(performance.now()-start)/1000; if(firstFrame){ firstFrame=false; canvas.style.opacity='1'; } gl.useProgram(prog); gl.uniform2f(u.res, canvas.width, canvas.height); gl.uniform2f(u.mouse, mouse[0], mouse[1]); gl.uniform1f(u.time, t); gl.uniform1f(u.specular, parseFloat(document.getElementById('uiSpec').value)); gl.uniform1f(u.depth, parseFloat(document.getElementById('uiDepth').value)); gl.uniform1f(u.rough, parseFloat(document.getElementById('uiRough').value)); gl.uniform1f(u.aniso, parseFloat(document.getElementById('uiAniso').value)); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); if(fallbackImg && fallbackImg.style.display!=='none') hideFallback(); requestAnimationFrame(draw); }
+      function loadImageToTexture(img){ gl.bindTexture(gl.TEXTURE_2D, tex); try{ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);}catch(e){} gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(u.img,0); if(window.setWeaveTexture) window.setWeaveTexture(img); }
+      function loadDefaultCouple(){ showFallback(DEFAULT_IMG_URL); const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>{ loadImageToTexture(img); if(!liteMode) requestAnimationFrame(()=> hideFallback()); }; img.src=DEFAULT_IMG_URL; };
+        img.src=DEFAULT_IMG_URL;
+      }
+
+      // pointer & dnd
+      canvas.addEventListener('pointermove',(e)=>{ const r=canvas.getBoundingClientRect(); mouse=[(e.clientX-r.left)/r.width, 1.0-(e.clientY-r.top)/r.height]; window.__VL_mouse = mouse; });
+      canvas.addEventListener('click',()=>{ const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=e=>{ const f=e.target.files[0]; if(f){ const img=new Image(); img.onload=()=> loadImageToTexture(img); img.src=URL.createObjectURL(f); } }; input.click(); });
+      ['dragenter','dragover'].forEach(ev=> canvas.addEventListener(ev, e=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; }));
+      canvas.addEventListener('drop', e=>{ e.preventDefault(); const f=e.dataTransfer.files&&e.dataTransfer.files[0]; if(f){ const img=new Image(); img.onload=()=> loadImageToTexture(img); img.src=URL.createObjectURL(f);} });
+      ['uiSpec','uiDepth','uiRough','uiAniso'].forEach(id=> document.getElementById(id).addEventListener('input',()=>{}));
+
+      // start
+      setup();
+      window.getSimulatorCanvasData=()=> toDataImageFromCanvas(canvas);
+
+      // FX overlay (2D)
+      (function(){ const layer=document.getElementById('fxLayer'); if(!layer) return; const ctx=layer.getContext('2d'); let w=0,h=0; const dpr=Math.min(window.devicePixelRatio||1,2);
+        function rs(){ w=layer.clientWidth; h=layer.clientHeight; if(w===0||h===0) return; layer.width=w*dpr; layer.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);} rafResize(layer, rs); rs();
+        const N=120; const P=[]; for(let i=0;i<N;i++){ P.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*0.2,vy:(Math.random()-.5)*0.2,s:Math.random()*1.5+0.4,a:Math.random()*6.28}); }
+        function frame(){ ctx.clearRect(0,0,w,h); const m=window.__VL_mouse||[0.5,0.5]; const mx=m[0]*w, my=(1-m[1])*h; for(let i=0;i<N;i++){ const o=P[i]; const dx=(mx-o.x)*0.0005, dy=(my-o.y)*0.0005; o.vx+=dx; o.vy+=dy; o.vx*=0.985; o.vy*=0.985; o.x+=o.vx; o.y+=o.vy; if(o.x<-20) o.x+=w+40; if(o.x>w+20) o.x-=w+40; if(o.y<-20) o.y+=h+40; if(o.y>h+20) o.y-=h+40; const grd=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,16*o.s); grd.addColorStop(0,'rgba(246,230,171,0.35)'); grd.addColorStop(1,'rgba(156,122,42,0)'); ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(o.x,o.y,14*o.s,0,6.283); ctx.fill(); }
+          const t=performance.now()/1000; ctx.save(); ctx.translate(w*0.5,h*0.5); ctx.rotate(Math.PI*0.18 + Math.sin(t*0.4)*0.08); const sweepX=Math.sin(t*0.6)*w*0.45; const grad=ctx.createLinearGradient(sweepX-120,0,sweepX+120,0); grad.addColorStop(0,'rgba(233,213,152,0)'); grad.addColorStop(0.5,'rgba(233,213,152,0.12)'); grad.addColorStop(1,'rgba(233,213,152,0)'); ctx.fillStyle=grad; ctx.globalCompositeOperation='lighter'; ctx.fillRect(-w,-h,w*2,h*2); ctx.restore(); requestAnimationFrame(frame);} frame(); })();
+    })();
+
+    // --- 3D METAL WEAVE logic (particles -> plane + iridescent reveal) + rAF-resize
+    (function(){ const canvas=document.getElementById('weave3d'); if(!canvas) return; if(!checkWebGL()){ canvas.parentElement.innerHTML = '<div style="padding:24px; text-align:center; color:#e7c768;">WebGL нужен для эффекта Metal Weave</div>'; return; } const gl=canvas.getContext('webgl'); function rs(){ canvas.width=canvas.clientWidth*devicePixelRatio; canvas.height=canvas.clientHeight*devicePixelRatio; if(gl) gl.viewport(0,0,canvas.width,canvas.height);} rafResize(canvas, rs);
+      function sh(t,s){const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); return o;}
+      function pr(v,f){const p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,v)); gl.attachShader(p,sh(gl.FRAGMENT_SHADER,f)); gl.linkProgram(p); return p;}
+      const VS_P=`attribute vec2 aPos; attribute vec2 aTgt; attribute float aSeed; uniform float t; uniform vec2 res; varying float vA; void main(){ float p=smoothstep(0.0,1.0,min(1.0,t*0.6 + aSeed*0.2)); vec2 pos=mix(aPos,aTgt,p); vA=p; gl_PointSize=2.0*res.y/700.0; gl_Position=vec4(pos,0.,1.); }`;
+      const FS_P=`precision mediump float; varying float vA; void main(){ float d=length(gl_PointCoord-vec2(0.5)); float a=smoothstep(0.5,0.0,d)*vA; gl_FragColor=vec4(1.0,0.9,0.6,a); }`;
+      const VS_Q=`attribute vec2 p; varying vec2 vUv; void main(){ vUv=(p+1.0)*0.5; gl_Position=vec4(p,0.,1.); }`;
+      const FS_Q=`precision mediump float; varying vec2 vUv; uniform sampler2D img; uniform float t; float gauss(float x,float s){ return exp(-x*x/(2.0*s*s)); } vec3 coat(vec2 uv){ float ir = 0.2*sin(uv.x*1200.0 + t*6.0)*0.5 + 0.2*sin(uv.y*900.0 - t*4.0)*0.5; float s = smoothstep(0.0,1.0,0.5+0.5*sin(t*0.7)); vec2 dir = normalize(vec2(0.86,0.5)); float d = dot(uv-0.5, dir) - s*0.2; float sweep = gauss(d,0.06); return mix(vec3(1.0,0.96,0.9), vec3(1.0,0.85,0.55), 0.25) * (0.25 + 0.35*sweep + 0.2*ir); } void main(){ vec3 base=texture2D(img,vUv).rgb; float vg=1.0 - smoothstep(0.7,1.02,distance(vUv,vec2(0.5))); vec3 col=base*0.92 + coat(vUv); col*=vg; gl_FragColor=vec4(col,1.0);} `;
+      const progP=pr(VS_P,FS_P), progQ=pr(VS_Q,FS_Q);
+      const W=200,H=100,N=W*H; const arr=new Float32Array(N*5); let i=0; for(let k=0;k<N;k++){ const a=Math.random()*Math.PI*2,b=Math.acos(Math.random()*2-1)-Math.PI/2; const r=0.9; const x=r*Math.cos(a)*Math.cos(b), y=r*Math.sin(a)*Math.cos(b); const gx=((k%W)/(W-1))*2-1; const gy=(Math.floor(k/W)/(H-1))*2-1; arr[i++]=x; arr[i++]=y; arr[i++]=gx; arr[i++]=gy; arr[i++]=Math.random(); }
+      const bufP=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,bufP); gl.bufferData(gl.ARRAY_BUFFER,arr,gl.STATIC_DRAW);
+      const bufQ=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,bufQ); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+      const tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR); const px=new Uint8Array([32,32,32,255]); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,px);
+      let start=performance.now(), replay=false;
+      function loop(){ const t=(performance.now()-start)/1000; gl.clearColor(0.05,0.05,0.06,1); gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.useProgram(progP); gl.bindBuffer(gl.ARRAY_BUFFER,bufP); const stride=5*4; let loc=gl.getAttribLocation(progP,'aPos'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,stride,0); loc=gl.getAttribLocation(progP,'aTgt'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,stride,2*4); loc=gl.getAttribLocation(progP,'aSeed'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,1,gl.FLOAT,false,stride,4*4); gl.uniform1f(gl.getUniformLocation(progP,'t'), Math.min(1.0,t/3.0)); gl.uniform2f(gl.getUniformLocation(progP,'res'), canvas.width, canvas.height); gl.drawArrays(gl.POINTS,0,N);
+        gl.useProgram(progQ); gl.bindBuffer(gl.ARRAY_BUFFER,bufQ); const lp=gl.getAttribLocation(progQ,'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp,2,gl.FLOAT,false,0,0); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,tex); gl.uniform1i(gl.getUniformLocation(progQ,'img'),0); gl.uniform1f(gl.getUniformLocation(progQ,'t'), t); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+        if(replay && t>0.2){ start=performance.now(); replay=false; } requestAnimationFrame(loop); }
+      rs(); requestAnimationFrame(loop);
+      window.setWeaveTexture=function(image){ gl.bindTexture(gl.TEXTURE_2D,tex); try{ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);}catch(e){} }
+      const btnR=document.getElementById('weaveReplay'); if(btnR) btnR.addEventListener('click', ()=>{ replay=true; });
+      const btnU=document.getElementById('weaveUseCurrent'); if(btnU) btnU.addEventListener('click', ()=>{ const dataURL = window.getSimulatorCanvasData && window.getSimulatorCanvasData(); if(!dataURL) return; const img=new Image(); img.onload=()=> window.setWeaveTexture(img); img.src=dataURL; });
+    })();
+
+    // --- ORDER fake validation + preview hook
+    (function(){ const f=document.getElementById('orderForm'); if(!f) return; const note=document.getElementById('orderNote'); const surprise=document.getElementById('surprise'); const sDrop=document.getElementById('sDrop');
+      surprise.addEventListener('change',()=>{ sDrop.style.display = surprise.checked ? 'grid' : 'none'; });
