@@ -153,12 +153,12 @@
       <h2 class="section-title">Галерея работ</h2>
       <p class="section-sub">Реальные сюжеты, стилизованные под металл</p>
       <div class="gallery">
-        <div class="tile"><img alt="Bride & Groom" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80"><div class="label">Bride & Groom</div></div>
-        <div class="tile"><img alt="Rings" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80"><div class="label">Rings</div></div>
-        <div class="tile"><img alt="Bouquet" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80"><div class="label">Bouquet</div></div>
-        <div class="tile"><img alt="First Dance" src="https://images.unsplash.com/photo-1519744346363-63a761017255?auto=format&fit=crop&w=900&q=80"><div class="label">First Dance</div></div>
-        <div class="tile"><img alt="Cake" src="https://images.unsplash.com/photo-1519167758481-83f550bb49a0?auto=format&fit=crop&w=900&q=80"><div class="label">Cake</div></div>
-        <div class="tile"><img alt="Venue" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"><div class="label">Venue</div></div>
+        <div class="tile"><img alt="Bride & Groom" src="https://source.unsplash.com/900x900/?wedding,couple,bride,groom"><div class="label">Bride & Groom</div></div>
+        <div class="tile"><img alt="Rings" src="https://source.unsplash.com/900x900/?wedding,rings,closeup"><div class="label">Rings</div></div>
+        <div class="tile"><img alt="Bouquet" src="https://source.unsplash.com/900x900/?wedding,bouquet,flowers"><div class="label">Bouquet</div></div>
+        <div class="tile"><img alt="First Dance" src="https://source.unsplash.com/900x900/?wedding,first-dance,party"><div class="label">First Dance</div></div>
+        <div class="tile"><img alt="Cake" src="https://source.unsplash.com/900x900/?wedding,cake,dessert"><div class="label">Cake</div></div>
+        <div class="tile"><img alt="Venue" src="https://source.unsplash.com/900x900/?wedding,venue,ceremony"><div class="label">Venue</div></div>
       </div>
     </section>
 
@@ -168,7 +168,7 @@
       <p class="section-sub">Ваше фото оживает на переливающемся металлическом холсте. Нажмите на холст или перетащите изображение.</p>
       <div class="sim-wrap">
         <div class="canvas3d-wrap">
-          <img id="simFallback" alt="Vlamiscend preview" loading="eager" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(1.05);" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1400&q=80"/>
+          <img id="simFallback" alt="Vlamiscend preview" loading="eager" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(1.05);" src="https://source.unsplash.com/1600x1000/?wedding,couple,bride,groom"/>
           <canvas id="canvas3d"></canvas>
           <canvas id="fxLayer"></canvas>
           <div class="canvas3d-overlay"><h3>Загрузка...</h3></div>
@@ -318,7 +318,7 @@
 
       const hasGL=checkWebGL();
       const fallbackImg=document.getElementById('simFallback');
-      const DEFAULT_IMG_URL = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1400&q=80';
+      const DEFAULT_IMG_URL = 'https://source.unsplash.com/1600x1000/?wedding,couple,bride,groom';
       const wrap=canvas.parentElement;
       const controls=document.querySelector('#simulator .controls');
       let liteMode=false;
